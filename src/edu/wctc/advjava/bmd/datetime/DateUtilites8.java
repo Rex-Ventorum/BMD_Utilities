@@ -143,7 +143,7 @@ public class DateUtilites8 {
      * <b>date1</b> = 4/29/1992 7:30:00am<br>
      * <b>date2</b> = 11/6/2017 9:00:00pm<br>
      * the return value would be an array: {25,6,8,13,30,0} <br>
-     * meaning: 25 Years, 6 Months, 8 Days, 13 Hours, 36 Minutes, 0 Seconds has passed between date1 and date2
+     * meaning: 25 Years, 6 Months, 8 Days, 13 Hours, 30 Minutes, 0 Seconds has passed between date1 and date2
      * 
      * @param date1 first date Object
      * @param date2 second date Object
