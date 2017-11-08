@@ -9,6 +9,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAdjusters;
 import java.time.temporal.TemporalUnit;
@@ -25,22 +26,80 @@ import java.time.temporal.UnsupportedTemporalTypeException;
 public class DateUtilites8 {
 
     private static final int BREAK_DOWN_UNITS = 6;
+    
+    /**
+     * Index of Year value in getChronoUnitBreakDownBetween() long array
+     */
     public static final int YEARS_IN_ARRAY = 0;
+    
+    /**
+     * Index of Month value in getChronoUnitBreakDownBetween() long array
+     */
     public static final int MONTHS_IN_ARRAY = 1;
+    
+    /**
+     * Index of Day value in getChronoUnitBreakDownBetween() long array
+     */
     public static final int DAYS_IN_ARRAY = 2;
+    
+    /**
+     * Index of Hour value in getChronoUnitBreakDownBetween() long array
+     */
     public static final int HOURS_IN_ARRAY = 3;
+    
+    /**
+     * Index of Minute value in getChronoUnitBreakDownBetween() long array
+     */
     public static final int MINNUTES_IN_ARRAY = 4;
+    
+    /**
+     * Index of Second value in getChronoUnitBreakDownBetween() long array
+     */
     public static final int SECONDS_IN_ARRAY = 5;
     
+    ///////////////////////////////////////////////////////////////////////////////
+    
+    /**
+     * A popularly used Date formating pattern (MM/dd/yyyy) <br>
+     * Example: 04/29/1992
+     */
     public static final String SHORT_DATE_ONLY = "MM/dd/yyyy";
+    
+    /**
+     * A popularly used Date formating pattern (MMMM dd, yyyy) <br>
+     * Example: April 29, 1992
+     */
     public static final String LONG_DATE_ONLY = "MMMM dd, yyyy";
+    
+     /**
+     * A popularly used Time formating pattern (hh:mm a) <br>
+     * Example: 07:30 am
+     */
     public static final String SHORT_TIME_ONLY = "hh:mm a";
+    
+    /**
+     * A popularly used Time formating pattern (HH:mm:ss) <br>
+     * Example: 13:24:03
+     */
     public static final String LONG_TIME_ONLY = "HH:mm:ss";
+    
+    /**
+     * A popularly used Date and Time formating pattern (MM/dd/yyyy hh:mm a) <br>
+     * Example: 04/29/1992 07:30 am
+     */
     public static final String SHORT_DATE_TIME = SHORT_DATE_ONLY + " " + SHORT_TIME_ONLY;
+    
+    /**
+     * A popularly used Date and Time formating pattern (MMMM dd, yyyy HH:mm:ss) <br>
+     * Example: April 29, 1992 13:30:04
+     */
     public static final String LONG_DATE_TIME = LONG_DATE_ONLY + " " + LONG_TIME_ONLY;
     
+    /////////////////////////////////////////////////////////////////////////////////////////
     
     private String defaultPattern;
+    
+    /////////////////////////////////////////////////////////////////////////////////////////
     
     public DateUtilites8(){
         defaultPattern = SHORT_DATE_TIME;
@@ -198,7 +257,7 @@ public class DateUtilites8 {
      * 
      * @param date1 first date Object
      * @param date2 second date Object
-     * @return A String Denoting the "? Years, ? Months, ? Days, ? Hours, ? Minutes, ? Seconds" between date1 and date2
+     * @return A String Denoting the additive "? Years, ? Months, ? Days, ? Hours, ? Minutes, ? Seconds" between date1 and date2
      * @throws ArithmeticException if numeric overflow occurs
      * @throws IllegalArgumentException Thrown if any of the arguments are null
      */
@@ -223,7 +282,7 @@ public class DateUtilites8 {
      * @param dow the DayOfWeek value desired
      * @param dom the Day Of Month value desired
      * @return LocalDate object who's value is the next occurrence of DayOfWeek with DayOfMonth
-     * @throws IllegalArgumentException if date or dow is null OR 31 > dom > 1
+     * @throws IllegalArgumentException if date or dow is null OR if dom is not between 1 and 31
      */
     public final LocalDate findNextDayOfWeekWithDateOfMonth(LocalDate date,DayOfWeek dow, int dom) throws IllegalArgumentException{
         if(date == null) throw new IllegalArgumentException("Date May Not Be Null");
@@ -242,35 +301,84 @@ public class DateUtilites8 {
      * @param dow the DayOfWeek value desired
      * @param dom the Day Of Month value desired
      * @return LocalDate object who's value is the next occurrence of DayOfWeek with DayOfMonth
-     * @throws IllegalArgumentException if dow is null OR 31 > dom > 1
+     * @throws IllegalArgumentException if dow is null OR if dom is not between 1 and 31
      */
     public final LocalDate findNextDayOfWeekWithDateOfMonth(DayOfWeek dow, int dom) throws IllegalArgumentException{
        return findNextDayOfWeekWithDateOfMonth(LocalDate.now(),dow,dom);
     }
     
+    /**
+     * Preforms the DateTimeFormatter.ofPattern(String).format(LocalDateTime) operation as one method call
+     * @param date The LocalDateTime object to be formatted
+     * @param pattern the pattern the date argument should be formatted to
+     * @return a formatted string of a LocalDateTime object as denoted by the pattern argument provided
+     * @throws IllegalArgumentException if Any of the arguments are null, pattern is empty, or pattern is invalid
+     */
     public final String formatLocalDateTimeToString(LocalDateTime date, String pattern) throws IllegalArgumentException{
         if(date == null || pattern == null || pattern.isEmpty()) throw new IllegalArgumentException("Arguments May Not Be Null Or Empty String");
         return DateTimeFormatter.ofPattern(pattern).format(date);
     }
     
+   
+    /**
+     * Preforms the DateTimeFormatter.ofPattern(String).format(LocalDateTime) operation as one method call
+     * uses a default pattern with one less argument than formatLocalDateTimeToString(LocalDateTime,String)
+     * by default the pattern is DateUtilites8.SHORT_DATE_TIME; The default can be changed via setDefaultFormatPattern(String) method 
+     * 
+     * @param date the LocalDateTime Object to be formatted
+     * @return formatted string of a LocalDateTime object as denoted by the pattern argument provided
+     * @throws IllegalArgumentException if Any of the arguments are null, pattern is empty, or pattern is invalid
+     */
     public final String formatLocalDateTimeToString(LocalDateTime date)throws IllegalArgumentException{
         return formatLocalDateTimeToString(date,defaultPattern);
     }
     
+    /**
+     * Preforms the LocalDateTime.parse(String,DateTimeFormatter.ofPattern(pattern)) operation as one method call
+     * Takes in a string containing date information and a pattern denoting how that string is formatted
+     * 
+     * @param dateString string containing date info to be parsed
+     * @param pattern the pattern for which the dateString should be formatted as to retrieve information
+     * @return a LocalDateTime object containing date info from dateString argument
+     * @throws IllegalArgumentException if Any of the arguments are null, pattern is empty, or pattern is invalid
+     * @throws DateTimeParseException if the text cannot be parsed
+     */
+    public final LocalDateTime getLocalDateTimeFromString(String dateString, String pattern)throws IllegalArgumentException, DateTimeParseException{
+        if(dateString == null || dateString.isEmpty() || pattern == null || pattern.isEmpty()) throw new IllegalArgumentException("Arguments May Not Be Null Or Empty");
+        return LocalDateTime.parse(dateString, DateTimeFormatter.ofPattern(pattern));
+    }  
+    
+    
+    /**
+     * Preforms the LocalDateTime.parse(String,DateTimeFormatter.ofPattern(pattern)) operation as one method call
+     * Takes in a string containing date information using the default pattern of DateTimeUntilites8.SHORT_DATE_TIME
+     * returns a localDateTime object containing date information from the string. The default pattern used can be changed
+     * via the setDefaultFormatPattern(String) method
+     * 
+     * @param dateString string containing date info to be parsed
+     * @return a LocalDateTime object containing date info from dateString argument
+     * @throws IllegalArgumentException if Any of the arguments are null, pattern is empty, or pattern is invalid
+     * @throws DateTimeParseException if the text cannot be parsed
+     */
     public final LocalDateTime getLocalDateTimeFromString(String dateString) throws IllegalArgumentException{
         return getLocalDateTimeFromString(dateString,defaultPattern);
     }
     
-    public final LocalDateTime getLocalDateTimeFromString(String dateString, String pattern)throws IllegalArgumentException{
-        if(dateString == null || dateString.isEmpty() || pattern == null || pattern.isEmpty()) throw new IllegalArgumentException("Arguments May Not Be Null Or Empty");
-        return LocalDateTime.parse(dateString, DateTimeFormatter.ofPattern(pattern));
-    }    
     
+    /**
+     * Mutates the default pattern used by this class to parse and format LocalDateTime objects
+     * by default this pattern is DateUtilities8.SHORT_DATE_TIME
+     * @param pattern the new format pattern to be used as default
+     * @throws IllegalArgumentException if pattern is null or empty
+     */
     public final void setDefaultFormatPattern(String pattern) throws IllegalArgumentException{
         if(pattern == null || pattern.isEmpty()) throw new IllegalArgumentException("Pattern May Not Be Null Or Empty");
         defaultPattern = pattern;
     }
     
+    /**
+     * @return the current formatting pattern string used by this class to format and parse LocalDateTime objects
+     */
     public final String getDefaultFormatPattern(){
         return defaultPattern;
     }
