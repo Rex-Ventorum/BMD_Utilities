@@ -18,6 +18,8 @@ import java.time.temporal.UnsupportedTemporalTypeException;
 /**
  * A Date Utilities helper class that provides extra LocalDateTime functionality that is 
  * either not provided by the original API or provides simplified method naming. 
+ * All references to "pattern" or "pattern strings" for formatting and parsing should be 
+ * formated to the specifications of DateTimeFormatter class
  * 
  * @author Brandon Michael Dopp
  * @version 1.0
@@ -335,7 +337,7 @@ public class DateUtilites8 {
     
     /**
      * Preforms the LocalDateTime.parse(String,DateTimeFormatter.ofPattern(pattern)) operation as one method call
-     * Takes in a string containing date information and a pattern denoting how that string is formatted
+     * Takes in a string containing date information and a pattern denoting how that string is formatted.
      * 
      * @param dateString string containing date info to be parsed
      * @param pattern the pattern for which the dateString should be formatted as to retrieve information
