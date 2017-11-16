@@ -245,7 +245,6 @@ public class DateUtilites8 {
        temp = temp.plusMinutes(breakDown[MINNUTES_IN_ARRAY]);
        
        breakDown[SECONDS_IN_ARRAY] = ChronoUnit.SECONDS.between(temp, date2);
-       temp = temp.plusSeconds(breakDown[SECONDS_IN_ARRAY]);
        
        return breakDown;
     }
